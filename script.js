@@ -106,19 +106,6 @@
     });
   }
 
-  /* ---------- sticky register button (phones): hide while a register CTA/form is on screen ---------- */
-  var sticky = document.getElementById('sticky-cta');
-  if (sticky && 'IntersectionObserver' in window) {
-    var visible = {};
-    var so = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting; });
-      var hide = !!(visible['hero-cta'] || visible['registration']);
-      sticky.classList.toggle('hide', hide);
-    }, { threshold: 0.15 });
-    so.observe(document.getElementById('hero-cta'));
-    so.observe(document.getElementById('registration'));
-  }
-
   /* ---------- registration form ---------- */
   var rf = document.getElementById('reg-form');
   var body = rf.querySelector('.form-body');
