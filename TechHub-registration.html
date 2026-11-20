@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="claude:viewport-fit-sides" content="cover">
+  <title>TechHub Hackathon | Registration</title>
+  <meta name="description" content="TechHub is a 15-hour university hackathon organized by the IGENERGY Scientific Club at ENSTTIC Oran on 03 December 2026. Register your place.">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=VT323&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="hero" id="top">
+    <p class="kicker">IGENERGY Scientific Club presents</p>
+    <h1 class="glitch" data-text="TechHub">TechHub</h1>
+    <div class="typed" aria-live="off"><span class="prompt">$</span> <span class="typed-box"><span id="typed">...</span><span class="cursor"></span></span></div>
+
+    <div class="event-details">
+      <article class="event-card">
+        <img class="event-icon" src="imgs/date.ico" alt="">
+        <p>03 Dec 2026</p>
+        <span class="event-sub" id="days-left">&nbsp;</span>
+      </article>
+      <article class="event-card">
+        <img class="event-icon" src="imgs/location.ico" alt="">
+        <p><strong>ENSTTIC</strong> Oran</p>
+        <span class="event-sub">Higher School of Telecommunications &amp; ICT</span>
+      </article>
+    </div>
+
+    <div class="cta" id="hero-cta">
+      <a class="btn solid" href="#registration">Register now</a>
+      <a class="btn" href="#about">How it works</a>
+    </div>
+
+    <div class="lede">
+      <p>TechHub is a university hackathon organized by IGENERGY Scientific Club. It brings together students from universities and higher education institutions across Oran to tackle real-world technological challenges.</p>
+      <p>Working in teams, participants analyze a problem, come up with an innovative solution, and build a prototype or proof of concept within 15 hours.</p>
+      <p>The event encourages creativity, interdisciplinary collaboration, and knowledge sharing, with potential guidance from mentors and project evaluation by a jury.</p>
+    </div>
+  </header>
+
+  <section class="sec" id="about">
+    <div class="sec-head"><h2 class="scr">HOW IT WORKS</h2><p>One day. Three steps.</p></div>
+    <div class="grid">
+      <article class="step">
+        <span class="file">01</span>
+        <h3>Analyze</h3>
+        <p>Team up and dig into a real-world technological problem.</p>
+      </article>
+      <article class="step">
+        <span class="file">02</span>
+        <h3>Build</h3>
+        <p>Design an innovative solution and develop a prototype or proof of concept in 15 hours.</p>
+      </article>
+      <article class="step">
+        <span class="file">03</span>
+        <h3>Present</h3>
+        <p>Show your project to the jury, with potential guidance from mentors along the way.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="registration">
+    <div class="sec-head"><h2 class="scr">REGISTRATION</h2><p>Takes about a minute. All fields are required.</p></div>
+    <form class="win form" id="reg-form" novalidate>
+      <div class="form-body">
+        <div class="field">
+          <label for="f-name">Full name</label>
+          <input id="f-name" name="name" type="text" placeholder="Ada Lovelace" autocomplete="name" required aria-describedby="e-name">
+          <span class="err" id="e-name" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required aria-describedby="e-email">
+          <span class="err" id="e-email" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Phone number</label>
+          <input id="f-phone" name="phone" type="tel" inputmode="tel" placeholder="+213 555 12 34 56" autocomplete="tel" required aria-describedby="e-phone">
+          <span class="err" id="e-phone" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-school">University / institution</label>
+          <input id="f-school" name="school" type="text" placeholder="Your university or school" autocomplete="organization" required aria-describedby="e-school">
+          <span class="err" id="e-school" aria-live="polite"></span>
+        </div>
+        <div class="form-foot">
+          <button class="btn solid" type="submit">Register</button>
+          <p class="status" id="f-status" role="status"></p>
+        </div>
+      </div>
+      <div class="success" id="f-success" hidden tabindex="-1">
+        <span class="check" aria-hidden="true">&#10003;</span>
+        <h3 id="s-title">You're in.</h3>
+        <p id="s-text"></p>
+      </div>
+    </form>
+  </section>
+
+  <footer>
+    <span>IGENERGY Scientific Club &middot; ENSTTIC Oran</span>
+    <span>TechHub 2026</span>
+  </footer>
+</div>
+
+<a class="sticky-cta" id="sticky-cta" href="#registration">Register now</a>
+
+<script src="script.js"></script>
+</body>
+</html>
