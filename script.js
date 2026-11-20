@@ -6,9 +6,9 @@
 
   /* ---------- typing line ---------- */
   var phrases = [
+    'IGENERGY CLUB...',
     'ENSTTIC, Senia-Oran',
     'A university hackathon',
-    '15 hours to build',
   ];
   var typedEl = document.getElementById('typed');
   /* reserve the width of the longest phrase so the ~$ prompt stays put while typing */
