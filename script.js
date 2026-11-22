@@ -8,7 +8,7 @@
   var phrases = [
     'IGENERGY CLUB...',
     'ENSTTIC, Senia-Oran',
-    'A university hackathon',
+    'Competition for students',
   ];
   var typedEl = document.getElementById('typed');
   /* reserve the width of the longest phrase so the ~$ prompt stays put while typing */
@@ -116,12 +116,26 @@
 
   if (DEMO_MODE) st.textContent = 'Demo form. Nothing is sent or stored.';
 
-  var rules = {
-    name: { id: 'f-name', err: 'e-name', test: function (v) { return v.length >= 2; }, msg: 'Enter your full name.' },
-    email: { id: 'f-email', err: 'e-email', test: function (v) { return /^\S+@\S+\.\S+$/.test(v); }, msg: 'Enter a valid email address.' },
-    phone: { id: 'f-phone', err: 'e-phone', test: function (v) { return /^\+?[\d\s().-]{8,}$/.test(v); }, msg: 'Enter a valid phone number.' },
-    school: { id: 'f-school', err: 'e-school', test: function (v) { return v.length >= 2; }, msg: 'Enter your university or institution.' }
+  var tests = {
+    name: { test: function (v) { return v.length >= 2; }, msg: 'Enter a full name.' },
+    phone: { test: function (v) { return /^\+?[\d\s().-]{8,}$/.test(v); }, msg: 'Enter a valid phone number.' },
+    email: { test: function (v) { return /^\S+@\S+\.\S+$/.test(v); }, msg: 'Enter a valid email address.' }
   };
+  var team = { id: 't-name', err: 'e-t-name', test: function (v) { return v.length >= 2; }, msg: 'Enter a team name.' };
+  var emptyMsg = { name: 'Enter a full name.', phone: 'Enter a phone number.', email: 'Enter an email address.' };
+
+  /* people: leader + members 01, 02 (required) + member 03 (optional) */
+  var people = [];
+  Array.prototype.forEach.call(rf.querySelectorAll('fieldset[data-person]'), function (fs) {
+    var p = fs.getAttribute('data-person');
+    people.push({
+      key: p,
+      optional: fs.hasAttribute('data-optional'),
+      fields: ['name', 'phone', 'email'].map(function (k) {
+        return { kind: k, id: p + '-' + k, err: 'e-' + p + '-' + k, input: document.getElementById(p + '-' + k) };
+      })
+    });
+  });
 
   function setError(r, message) {
     var input = document.getElementById(r.id);
@@ -129,44 +143,77 @@
     if (message) input.setAttribute('aria-invalid', 'true');
     else input.removeAttribute('aria-invalid');
   }
+  function validTest(f) { return f.kind ? tests[f.kind].test : f.test; }
+  function badMsg(f) { return f.kind ? tests[f.kind].msg : f.msg; }
 
-  Object.keys(rules).forEach(function (k) {
-    var r = rules[k];
+  var all = [team];
+  people.forEach(function (p) { p.fields.forEach(function (f) { all.push(f); }); });
+  all.forEach(function (r) {
     var input = document.getElementById(r.id);
     /* clear the error as soon as the value becomes valid */
     input.addEventListener('input', function () {
-      if (input.getAttribute('aria-invalid') === 'true' && r.test(input.value.trim())) setError(r, '');
+      var v = input.value.trim();
+      if (input.getAttribute('aria-invalid') === 'true' && v && validTest(r)(v)) setError(r, '');
     });
     /* validate when leaving a field that has content */
     input.addEventListener('blur', function () {
       var v = input.value.trim();
-      if (v && !r.test(v)) setError(r, r.msg);
+      if (v && !validTest(r)(v)) setError(r, badMsg(r));
     });
   });
 
   rf.addEventListener('submit', function (e) {
     e.preventDefault();
     var firstBad = null;
-    var values = {};
-    Object.keys(rules).forEach(function (k) {
-      var r = rules[k];
-      var v = document.getElementById(r.id).value.trim();
-      values[k] = v;
-      if (r.test(v)) setError(r, '');
-      else { setError(r, r.msg); if (!firstBad) firstBad = document.getElementById(r.id); }
+    function flag(r, msg) { setError(r, msg); if (!firstBad) firstBad = document.getElementById(r.id); }
+
+    var data = { team_name: document.getElementById('t-name').value.trim(), club: document.getElementById('t-club').checked, members: [] };
+    if (!team.test(data.team_name)) flag(team, team.msg); else setError(team, '');
+
+    people.forEach(function (p) {
+      var vals = {};
+      var anyFilled = false;
+      p.fields.forEach(function (f) { vals[f.kind] = f.input.value.trim(); if (vals[f.kind]) anyFilled = true; });
+      /* optional member 03: skipped entirely if left blank, fully required once started */
+      var skip = p.optional && !anyFilled;
+      p.fields.forEach(function (f) {
+        var v = vals[f.kind];
+        if (skip) { setError(f, ''); return; }
+        if (!v) flag(f, emptyMsg[f.kind]);
+        else if (!tests[f.kind].test(v)) flag(f, tests[f.kind].msg);
+        else setError(f, '');
+      });
+      if (!skip) { vals.role = p.key === 'l' ? 'leader' : 'member'; data.members.push(vals); }
     });
+
     if (firstBad) {
       st.className = 'status bad';
       st.textContent = 'Please fix the highlighted fields.';
       firstBad.focus();
       return;
     }
-    /* TODO: send `values` to the backend here, then show the success state. */
-    var first = values.name.split(/\s+/)[0];
-    sTitle.textContent = "You're in, " + first + '.';
+
+    /* duplicate emails within the team */
+    var seen = {};
+    for (var i = 0; i < data.members.length; i++) {
+      var em = data.members[i].email.toLowerCase();
+      if (seen[em]) {
+        var dup = people.filter(function (p) { return p.fields[2].input.value.trim().toLowerCase() === em; })[1];
+        setError(dup.fields[2], 'This email is already used in your team.');
+        dup.fields[2].input.focus();
+        st.className = 'status bad';
+        st.textContent = 'Each team member needs a different email.';
+        return;
+      }
+      seen[em] = true;
+    }
+
+    /* TODO: send `data` to the backend here, then show the success state. */
+    var leaderFirst = data.members[0].name.split(/\s+/)[0];
+    sTitle.textContent = 'Team ' + data.team_name + ' is in, ' + leaderFirst + '.';
     sText.textContent = DEMO_MODE
-      ? 'Demo only: nothing was sent. In the live version, your confirmation will go to ' + values.email + '.'
-      : 'Your place is reserved. We will contact you at ' + values.email + ' with the next steps.';
+      ? 'Demo only: nothing was sent. In the live version, the confirmation will go to ' + data.members[0].email + '.'
+      : 'Your team is registered (' + data.members.length + ' members). We will contact ' + data.members[0].email + ' with the next steps.';
     body.hidden = true;
     ok.hidden = false;
     ok.focus();

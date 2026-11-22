@@ -62,36 +62,104 @@
   </section> -->
 
   <section class="sec" id="registration">
-    <div class="sec-head"><h2 class="scr">REGISTRATION</h2><p>Takes about a minute. All fields are required.</p></div>
+    <div class="sec-head"><h2 class="scr">REGISTRATION</h2><p>The team must have at least 3 members and no more than 4 members.</p></div>
     <form class="win form" id="reg-form" novalidate>
       <div class="form-body">
-        <div class="field">
-          <label for="f-name">Full name</label>
-          <input id="f-name" name="name" type="text" placeholder="Ada Lovelace" autocomplete="name" required aria-describedby="e-name">
-          <span class="err" id="e-name" aria-live="polite"></span>
+
+        <div class="field full">
+          <label for="t-name">Team name</label>
+          <input id="t-name" name="team_name" type="text" placeholder="Your team name" autocomplete="off" required aria-describedby="e-t-name">
+          <span class="err" id="e-t-name" aria-live="polite"></span>
         </div>
-        <div class="field">
-          <label for="f-email">Email</label>
-          <input id="f-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required aria-describedby="e-email">
-          <span class="err" id="e-email" aria-live="polite"></span>
-        </div>
-        <div class="field">
-          <label for="f-phone">Phone number</label>
-          <input id="f-phone" name="phone" type="tel" inputmode="tel" placeholder="+213 555 12 34 56" autocomplete="tel" required aria-describedby="e-phone">
-          <span class="err" id="e-phone" aria-live="polite"></span>
-        </div>
-        <div class="field">
-          <label for="f-school">University / institution</label>
-          <input id="f-school" name="school" type="text" placeholder="Your university or school" autocomplete="organization" required aria-describedby="e-school">
-          <span class="err" id="e-school" aria-live="polite"></span>
-        </div>
+
+        <fieldset class="group" data-person="l">
+          <legend>Team Leader</legend>
+          <div class="field span2">
+            <label for="l-name">Full name</label>
+            <input id="l-name" name="leader_name" type="text" placeholder="Yasser Aroui" autocomplete="name" aria-describedby="e-l-name">
+            <span class="err" id="e-l-name" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="l-phone">Phone number</label>
+            <input id="l-phone" name="leader_phone" type="tel" inputmode="tel" placeholder="07..." autocomplete="tel" aria-describedby="e-l-phone">
+            <span class="err" id="e-l-phone" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="l-email">Email</label>
+            <input id="l-email" name="leader_email" type="email" inputmode="email" placeholder="leader@gmail.com" autocomplete="email" aria-describedby="e-l-email">
+            <span class="err" id="e-l-email" aria-live="polite"></span>
+          </div>
+        </fieldset>
+
+        <fieldset class="group" data-person="m1">
+          <legend>Member 01</legend>
+          <div class="field span2">
+            <label for="m1-name">Full name</label>
+            <input id="m1-name" name="member1_name" type="text" placeholder="Full name" autocomplete="off" aria-describedby="e-m1-name">
+            <span class="err" id="e-m1-name" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="m1-phone">Phone number</label>
+            <input id="m1-phone" name="member1_phone" type="tel" inputmode="tel" placeholder="07..." autocomplete="off" aria-describedby="e-m1-phone">
+            <span class="err" id="e-m1-phone" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="m1-email">Email</label>
+            <input id="m1-email" name="member1_email" type="email" inputmode="email" placeholder="member@gmail.com" autocomplete="off" aria-describedby="e-m1-email">
+            <span class="err" id="e-m1-email" aria-live="polite"></span>
+          </div>
+        </fieldset>
+
+        <fieldset class="group" data-person="m2">
+          <legend>Member 02</legend>
+          <div class="field span2">
+            <label for="m2-name">Full name</label>
+            <input id="m2-name" name="member2_name" type="text" placeholder="Full name" autocomplete="off" aria-describedby="e-m2-name">
+            <span class="err" id="e-m2-name" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="m2-phone">Phone number</label>
+            <input id="m2-phone" name="member2_phone" type="tel" inputmode="tel" placeholder="07..." autocomplete="off" aria-describedby="e-m2-phone">
+            <span class="err" id="e-m2-phone" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="m2-email">Email</label>
+            <input id="m2-email" name="member2_email" type="email" inputmode="email" placeholder="member@gmail.com" autocomplete="off" aria-describedby="e-m2-email">
+            <span class="err" id="e-m2-email" aria-live="polite"></span>
+          </div>
+        </fieldset>
+
+        <fieldset class="group" data-person="m3" data-optional>
+          <legend>Member 03</legend>
+          <div class="field span2">
+            <label for="m3-name">Full name</label>
+            <input id="m3-name" name="member3_name" type="text" placeholder="Full name" autocomplete="off" aria-describedby="e-m3-name">
+            <span class="err" id="e-m3-name" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="m3-phone">Phone number</label>
+            <input id="m3-phone" name="member3_phone" type="tel" inputmode="tel" placeholder="07..." autocomplete="off" aria-describedby="e-m3-phone">
+            <span class="err" id="e-m3-phone" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="m3-email">Email</label>
+            <input id="m3-email" name="member3_email" type="email" inputmode="email" placeholder="member@gmail.com" autocomplete="off" aria-describedby="e-m3-email">
+            <span class="err" id="e-m3-email" aria-live="polite"></span>
+          </div>
+        </fieldset>
+
+        <label class="check" for="t-club">
+          <input id="t-club" name="club" type="checkbox">
+          <span>Our team from a club</span>
+        </label>
+
         <div class="form-foot">
-          <button class="btn solid" type="submit">Register</button>
+          <button class="btn solid" type="submit">Register team</button>
           <p class="status" id="f-status" role="status"></p>
         </div>
       </div>
       <div class="success" id="f-success" hidden tabindex="-1">
-        <span class="check" aria-hidden="true">&#10003;</span>
+        <span class="check-mark" aria-hidden="true">&#10003;</span>
         <h3 id="s-title">You're in.</h3>
         <p id="s-text"></p>
       </div>

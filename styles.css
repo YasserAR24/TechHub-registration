@@ -55,7 +55,7 @@ a { color: var(--accent); }
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(140px, 17vw, 368px);
+  font-size: 26vw;
   line-height: 0.9;
   letter-spacing: 0.02em;
   color: var(--accent);
@@ -167,7 +167,7 @@ a { color: var(--accent); }
 
 /* success state */
 .success { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 28px 8px; outline: 0; }
-.success .check { display: grid; place-items: center; width: 56px; height: 56px; border: 2px solid var(--accent); color: var(--accent); font-size: 28px; box-shadow: 0 0 22px rgba(57,255,122,0.4); }
+.success .check-mark { display: grid; place-items: center; width: 56px; height: 56px; border: 2px solid var(--accent); color: var(--accent); font-size: 28px; box-shadow: 0 0 22px rgba(57,255,122,0.4); }
 .success h3 { margin: 6px 0 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1; color: var(--accent); }
 .success p { margin: 0; color: var(--fg); max-width: 44ch; overflow-wrap: anywhere; }
 
@@ -198,4 +198,21 @@ footer { color: var(--dim); font-size: 12px; border-top: 1px solid var(--line); 
   .kicker { font-size: 10px; letter-spacing: 0.14em; }
   .form { padding: 20px 16px; }
   .form-body { grid-template-columns: 1fr; }
+}
+
+/* ---------- team registration ---------- */
+.form { max-width: 680px; }
+.form-body { display: flex; flex-direction: column; gap: 20px; }
+.form-body .field.full { width: 100%; }
+fieldset.group { margin: 0; min-width: 0; padding: 16px; border: 1px solid var(--line); background: rgba(0,0,0,0.18); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+fieldset.group legend { padding: 0 8px; font-family: var(--font-display); font-size: 26px; line-height: 1; color: var(--accent); letter-spacing: 0.03em; }
+fieldset.group legend .opt { font-family: var(--font-body); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-left: 6px; }
+fieldset.group .field.span2 { grid-column: 1 / -1; }
+.check { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border: 1px solid var(--line); background: var(--bg); cursor: pointer; color: var(--fg); line-height: 1.5; }
+.check:hover { border-color: #24512f; }
+.check input { flex: none; width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); cursor: pointer; }
+.check:has(input:checked) { border-color: var(--accent); }
+.hint { display: block; color: var(--dim); font-size: 12px; }
+@media (max-width: 600px) {
+  fieldset.group { grid-template-columns: 1fr; padding: 14px 12px; }
 }
