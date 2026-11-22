@@ -1,6 +1,6 @@
 (function () {
-  /* Set to false once the form is connected to a real backend. */
-  var DEMO_MODE = true;
+  /* Paste your Google Apps Script web app URL here. While empty, the form runs in demo mode (nothing is sent). */
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwH4mC_ywdNRfC_RdzYVOdo6pVyYbTN2GWVeYnfvB27Zuy_sHIFQj2Kflj-v5Ka-LpK/exec';
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -80,7 +80,7 @@
   /* ---------- scroll reveal ---------- */
   if (!reduce && 'IntersectionObserver' in window) {
     document.documentElement.classList.add('js');
-    var targets = document.querySelectorAll('.hero > *, .sec-head, .win, .step, footer');
+    var targets = document.querySelectorAll('.hero > *, .sec-head, .win, footer');
     var ro = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
@@ -96,7 +96,7 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
     Array.prototype.forEach.call(targets, function (el) {
       var i = 0;
-      if (el.classList.contains('step') || el.parentNode.classList.contains('hero')) {
+      if (el.parentNode.classList.contains('hero')) {
         var n = el.previousElementSibling;
         while (n) { i++; n = n.previousElementSibling; }
       }
@@ -110,19 +110,21 @@
   var rf = document.getElementById('reg-form');
   var body = rf.querySelector('.form-body');
   var st = document.getElementById('f-status');
+  var submitBtn = document.getElementById('f-submit');
   var ok = document.getElementById('f-success');
   var sTitle = document.getElementById('s-title');
   var sText = document.getElementById('s-text');
 
-  if (DEMO_MODE) st.textContent = 'Demo form. Nothing is sent or stored.';
+  if (!SCRIPT_URL) st.textContent = 'Demo form. Nothing is sent or stored.';
 
+  var PHONE_MSG = 'Phone number must be 10 digits (e.g. 0778683618).';
   var tests = {
     name: { test: function (v) { return v.length >= 2; }, msg: 'Enter a full name.' },
-    phone: { test: function (v) { return /^\+?[\d\s().-]{8,}$/.test(v); }, msg: 'Enter a valid phone number.' },
+    phone: { test: function (v) { return /^\d{10}$/.test(v); }, msg: PHONE_MSG },
     email: { test: function (v) { return /^\S+@\S+\.\S+$/.test(v); }, msg: 'Enter a valid email address.' }
   };
   var team = { id: 't-name', err: 'e-t-name', test: function (v) { return v.length >= 2; }, msg: 'Enter a team name.' };
-  var emptyMsg = { name: 'Enter a full name.', phone: 'Enter a phone number.', email: 'Enter an email address.' };
+  var emptyMsg = { name: 'Enter a full name.', phone: PHONE_MSG, email: 'Enter an email address.' };
 
   /* people: leader + members 01, 02 (required) + member 03 (optional) */
   var people = [];
@@ -150,17 +152,42 @@
   people.forEach(function (p) { p.fields.forEach(function (f) { all.push(f); }); });
   all.forEach(function (r) {
     var input = document.getElementById(r.id);
-    /* clear the error as soon as the value becomes valid */
     input.addEventListener('input', function () {
+      /* phone: digits only, max 10 */
+      if (r.kind === 'phone') input.value = input.value.replace(/\D/g, '').slice(0, 10);
       var v = input.value.trim();
       if (input.getAttribute('aria-invalid') === 'true' && v && validTest(r)(v)) setError(r, '');
     });
-    /* validate when leaving a field that has content */
     input.addEventListener('blur', function () {
       var v = input.value.trim();
       if (v && !validTest(r)(v)) setError(r, badMsg(r));
     });
   });
+
+  function finish(data) {
+    var leaderFirst = data.members[0].name.split(/\s+/)[0];
+    sTitle.textContent = 'Team ' + data.team_name + ' is in, ' + leaderFirst + '.';
+    sText.textContent = SCRIPT_URL
+      ? 'Your team is registered (' + data.members.length + ' members). We will contact ' + data.members[0].email + ' with the next steps.'
+      : 'Demo only: nothing was sent. In the live version, the confirmation will go to ' + data.members[0].email + '.';
+    body.hidden = true;
+    ok.hidden = false;
+    ok.focus();
+  }
+
+  function send(data) {
+    var labels = ['leader', 'member1', 'member2', 'member3'];
+    var params = new URLSearchParams();
+    params.append('team_name', data.team_name);
+    params.append('club', data.club ? 'Yes' : 'No');
+    data.members.forEach(function (m, i) {
+      params.append(labels[i] + '_name', m.name);
+      params.append(labels[i] + '_phone', m.phone);
+      params.append(labels[i] + '_email', m.email);
+    });
+    /* no-cors: Apps Script does not send CORS headers; the request still reaches the sheet */
+    return fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: params });
+  }
 
   rf.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -183,7 +210,7 @@
         else if (!tests[f.kind].test(v)) flag(f, tests[f.kind].msg);
         else setError(f, '');
       });
-      if (!skip) { vals.role = p.key === 'l' ? 'leader' : 'member'; data.members.push(vals); }
+      if (!skip) data.members.push(vals);
     });
 
     if (firstBad) {
@@ -193,29 +220,37 @@
       return;
     }
 
-    /* duplicate emails within the team */
-    var seen = {};
+    /* duplicate emails or phones within the team */
+    var seenE = {}, seenP = {};
     for (var i = 0; i < data.members.length; i++) {
-      var em = data.members[i].email.toLowerCase();
-      if (seen[em]) {
-        var dup = people.filter(function (p) { return p.fields[2].input.value.trim().toLowerCase() === em; })[1];
-        setError(dup.fields[2], 'This email is already used in your team.');
-        dup.fields[2].input.focus();
+      var em = data.members[i].email.toLowerCase(), ph = data.members[i].phone;
+      if (seenE[em] || seenP[ph]) {
+        var isEmail = !!seenE[em];
+        var kind = isEmail ? 'email' : 'phone';
+        var val = isEmail ? em : ph;
+        var dup = people.filter(function (p) {
+          var f = p.fields[isEmail ? 2 : 1].input.value.trim();
+          return (isEmail ? f.toLowerCase() : f) === val;
+        })[1];
+        var fld = dup.fields[isEmail ? 2 : 1];
+        setError(fld, 'This ' + kind + ' is already used in your team.');
+        fld.input.focus();
         st.className = 'status bad';
-        st.textContent = 'Each team member needs a different email.';
+        st.textContent = 'Each team member needs a different ' + kind + '.';
         return;
       }
-      seen[em] = true;
+      seenE[em] = true; seenP[ph] = true;
     }
 
-    /* TODO: send `data` to the backend here, then show the success state. */
-    var leaderFirst = data.members[0].name.split(/\s+/)[0];
-    sTitle.textContent = 'Team ' + data.team_name + ' is in, ' + leaderFirst + '.';
-    sText.textContent = DEMO_MODE
-      ? 'Demo only: nothing was sent. In the live version, the confirmation will go to ' + data.members[0].email + '.'
-      : 'Your team is registered (' + data.members.length + ' members). We will contact ' + data.members[0].email + ' with the next steps.';
-    body.hidden = true;
-    ok.hidden = false;
-    ok.focus();
+    if (!SCRIPT_URL) { finish(data); return; }
+
+    submitBtn.disabled = true;
+    st.className = 'status';
+    st.textContent = 'Sending...';
+    send(data).then(function () { finish(data); }).catch(function () {
+      submitBtn.disabled = false;
+      st.className = 'status bad';
+      st.textContent = 'Could not send. Check your connection and try again.';
+    });
   });
 })();

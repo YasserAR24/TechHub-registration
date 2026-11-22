@@ -40,33 +40,12 @@
     </div>
   </header>
 
-  <!-- <section class="sec" id="about">
-    <div class="sec-head"><h2 class="scr">HOW IT WORKS</h2><p>One day. Three steps.</p></div>
-    <div class="grid">
-      <article class="step">
-        <span class="file">01</span>
-        <h3>Analyze</h3>
-        <p>Team up and dig into a real-world technological problem.</p>
-      </article>
-      <article class="step">
-        <span class="file">02</span>
-        <h3>Build</h3>
-        <p>Design an innovative solution and develop a prototype or proof of concept in 15 hours.</p>
-      </article>
-      <article class="step">
-        <span class="file">03</span>
-        <h3>Present</h3>
-        <p>Show your project to the jury, with potential guidance from mentors along the way.</p>
-      </article>
-    </div>
-  </section> -->
-
   <section class="sec" id="registration">
     <div class="sec-head"><h2 class="scr">REGISTRATION</h2><p>The team must have at least 3 members and no more than 4 members.</p></div>
     <form class="win form" id="reg-form" novalidate>
       <div class="form-body">
 
-        <div class="field full">
+        <div class="field">
           <label for="t-name">Team name</label>
           <input id="t-name" name="team_name" type="text" placeholder="Your team name" autocomplete="off" required aria-describedby="e-t-name">
           <span class="err" id="e-t-name" aria-live="polite"></span>
@@ -76,12 +55,12 @@
           <legend>Team Leader</legend>
           <div class="field span2">
             <label for="l-name">Full name</label>
-            <input id="l-name" name="leader_name" type="text" placeholder="Yasser Aroui" autocomplete="name" aria-describedby="e-l-name">
+            <input id="l-name" name="leader_name" type="text" placeholder="Full name" autocomplete="name" aria-describedby="e-l-name">
             <span class="err" id="e-l-name" aria-live="polite"></span>
           </div>
           <div class="field">
             <label for="l-phone">Phone number</label>
-            <input id="l-phone" name="leader_phone" type="tel" inputmode="tel" placeholder="07..." autocomplete="tel" aria-describedby="e-l-phone">
+            <input id="l-phone" name="leader_phone" type="tel" inputmode="numeric" placeholder="07..." autocomplete="tel" aria-describedby="e-l-phone">
             <span class="err" id="e-l-phone" aria-live="polite"></span>
           </div>
           <div class="field">
@@ -100,7 +79,7 @@
           </div>
           <div class="field">
             <label for="m1-phone">Phone number</label>
-            <input id="m1-phone" name="member1_phone" type="tel" inputmode="tel" placeholder="07..." autocomplete="off" aria-describedby="e-m1-phone">
+            <input id="m1-phone" name="member1_phone" type="tel" inputmode="numeric" placeholder="07..." autocomplete="off" aria-describedby="e-m1-phone">
             <span class="err" id="e-m1-phone" aria-live="polite"></span>
           </div>
           <div class="field">
@@ -119,7 +98,7 @@
           </div>
           <div class="field">
             <label for="m2-phone">Phone number</label>
-            <input id="m2-phone" name="member2_phone" type="tel" inputmode="tel" placeholder="07..." autocomplete="off" aria-describedby="e-m2-phone">
+            <input id="m2-phone" name="member2_phone" type="tel" inputmode="numeric" placeholder="07..." autocomplete="off" aria-describedby="e-m2-phone">
             <span class="err" id="e-m2-phone" aria-live="polite"></span>
           </div>
           <div class="field">
@@ -138,7 +117,7 @@
           </div>
           <div class="field">
             <label for="m3-phone">Phone number</label>
-            <input id="m3-phone" name="member3_phone" type="tel" inputmode="tel" placeholder="07..." autocomplete="off" aria-describedby="e-m3-phone">
+            <input id="m3-phone" name="member3_phone" type="tel" inputmode="numeric" placeholder="07..." autocomplete="off" aria-describedby="e-m3-phone">
             <span class="err" id="e-m3-phone" aria-live="polite"></span>
           </div>
           <div class="field">
@@ -154,7 +133,7 @@
         </label>
 
         <div class="form-foot">
-          <button class="btn solid" type="submit">Register team</button>
+          <button class="btn solid" type="submit" id="f-submit">Register team</button>
           <p class="status" id="f-status" role="status"></p>
         </div>
       </div>
