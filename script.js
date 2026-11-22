@@ -8,7 +8,7 @@
   var phrases = [
     'IGENERGY CLUB...',
     'ENSTTIC, Senia-Oran',
-    'Competition for students',
+    'Competition',
   ];
   var typedEl = document.getElementById('typed');
   /* reserve the width of the longest phrase so the ~$ prompt stays put while typing */
@@ -31,7 +31,7 @@
 
   /* ---------- event countdown ---------- */
   var daysEl = document.getElementById('days-left');
-  var eventDay = new Date(2026, 11, 3).getTime();
+  var eventDay = new Date(2026, 11, 5).getTime();
   function updateCountdown() {
     var left = eventDay - Date.now();
     if (left <= 0) {
@@ -168,7 +168,7 @@
     var leaderFirst = data.members[0].name.split(/\s+/)[0];
     sTitle.textContent = 'Team ' + data.team_name + ' is in, ' + leaderFirst + '.';
     sText.textContent = SCRIPT_URL
-      ? 'Your team is registered (' + data.members.length + ' members). We will contact ' + data.members[0].email + ' with the next steps.'
+      ? 'Your team is registered (' + data.members.length + ' members), We will contact ' + data.members[0].email + 'for confirmation.'
       : 'Demo only: nothing was sent. In the live version, the confirmation will go to ' + data.members[0].email + '.';
     body.hidden = true;
     ok.hidden = false;
