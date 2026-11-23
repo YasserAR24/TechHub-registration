@@ -117,7 +117,7 @@
 
   if (!SCRIPT_URL) st.textContent = 'Demo form. Nothing is sent or stored.';
 
-  var PHONE_MSG = 'Phone number must be 10 digits (e.g. 0778683618).';
+  var PHONE_MSG = 'Phone number must be 10 digits.';
   var tests = {
     name: { test: function (v) { return v.length >= 2; }, msg: 'Enter a full name.' },
     phone: { test: function (v) { return /^\d{10}$/.test(v); }, msg: PHONE_MSG },
@@ -168,7 +168,7 @@
     var leaderFirst = data.members[0].name.split(/\s+/)[0];
     sTitle.textContent = 'Team ' + data.team_name + ' is in, ' + leaderFirst + '.';
     sText.textContent = SCRIPT_URL
-      ? 'Your team is registered (' + data.members.length + ' members), We will contact ' + data.members[0].email + 'for confirmation.'
+      ? 'Your team is registered (' + data.members.length + ' members), We will contact ' + data.members[0].email + ' for confirmation.'
       : 'Demo only: nothing was sent. In the live version, the confirmation will go to ' + data.members[0].email + '.';
     body.hidden = true;
     ok.hidden = false;
