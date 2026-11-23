@@ -117,10 +117,10 @@
 
   if (!SCRIPT_URL) st.textContent = 'Demo form. Nothing is sent or stored.';
 
-  var PHONE_MSG = 'Phone number must be 10 digits.';
+  var PHONE_MSG = 'Phone must be 10 digits and start with 05, 06 or 07.';
   var tests = {
     name: { test: function (v) { return v.length >= 2; }, msg: 'Enter a full name.' },
-    phone: { test: function (v) { return /^\d{10}$/.test(v); }, msg: PHONE_MSG },
+    phone: { test: function (v) { return /^0[567]\d{8}$/.test(v); }, msg: PHONE_MSG },
     email: { test: function (v) { return /^\S+@\S+\.\S+$/.test(v); }, msg: 'Enter a valid email address.' }
   };
   var team = { id: 't-name', err: 'e-t-name', test: function (v) { return v.length >= 2; }, msg: 'Enter a team name.' };
