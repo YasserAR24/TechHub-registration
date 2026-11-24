@@ -6,9 +6,9 @@
 
   /* ---------- typing line ---------- */
   var phrases = [
-    'IGENERGY CLUB...',
-    'ENSTTIC, Senia-Oran',
-    'Competition',
+    'IGENERGY club...',
+    'Presnts...',
+    'TechHub Competition',
   ];
   var typedEl = document.getElementById('typed');
   /* reserve the width of the longest phrase so the ~$ prompt stays put while typing */
@@ -166,7 +166,7 @@
 
   function finish(data) {
     var leaderFirst = data.members[0].name.split(/\s+/)[0];
-    sTitle.textContent = 'Team ' + data.team_name + ' is in, ' + leaderFirst + '.';
+    sTitle.textContent = 'Team ' + data.team_name + ' is in.';
     sText.textContent = SCRIPT_URL
       ? 'Your team is registered (' + data.members.length + ' members), We will contact ' + data.members[0].email + ' for confirmation.'
       : 'Demo only: nothing was sent. In the live version, the confirmation will go to ' + data.members[0].email + '.';
