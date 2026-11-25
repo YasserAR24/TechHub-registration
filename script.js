@@ -165,11 +165,16 @@
   });
 
   function finish(data) {
-    var leaderFirst = data.members[0].name.split(/\s+/)[0];
+    var names = data.members.map(function (m) { return m.name; });
+    var leader = names[0];
+    var others = names.slice(1);
     sTitle.textContent = 'Team ' + data.team_name + ' is in.';
-    sText.textContent = SCRIPT_URL
-      ? 'Your team is registered (' + data.members.length + ' members), We will contact ' + data.members[0].email + ' for confirmation.'
-      : 'Demo only: nothing was sent. In the live version, the confirmation will go to ' + data.members[0].email + '.';
+    sText.textContent =
+      'Leader: ' + leader + '.\n' +
+      'Members: ' + others.join(', ') + '.\n' +
+      (SCRIPT_URL
+        ? 'We will contact ' + data.members[0].email + ' for confirmation.'
+        : 'Demo only: nothing was sent. The confirmation would go to ' + data.members[0].email + '.');
     body.hidden = true;
     ok.hidden = false;
     ok.focus();
