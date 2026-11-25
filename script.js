@@ -42,40 +42,10 @@
     var hours = Math.floor((left % 86400000) / 3600000);
     var minutes = Math.floor((left % 3600000) / 60000);
     var seconds = Math.floor((left % 60000) / 1000);
-    daysEl.textContent = days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's to go';
+    daysEl.textContent = days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
   }
   updateCountdown();
   setInterval(updateCountdown, 1000);
-
-  /* ---------- scramble headings ---------- */
-  var sg = '01#$%&@!<>/\\|[]{}';
-  function scramble(el) {
-    var final = el.getAttribute('data-final');
-    var frames = 0, total = 20;
-    var iv = setInterval(function () {
-      frames++;
-      var s = '';
-      for (var i = 0; i < final.length; i++) {
-        if (final.charAt(i) === ' ' || i < final.length * frames / total) s += final.charAt(i);
-        else s += sg.charAt(Math.floor(Math.random() * sg.length));
-      }
-      el.textContent = s;
-      if (frames >= total) { clearInterval(iv); el.textContent = final; }
-    }, 40);
-  }
-  var heads = document.querySelectorAll('.scr');
-  for (var h = 0; h < heads.length; h++) {
-    heads[h].setAttribute('data-final', heads[h].textContent);
-    heads[h].setAttribute('aria-label', heads[h].textContent);
-  }
-  if (!reduce && 'IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { scramble(e.target); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.8 });
-    for (var j = 0; j < heads.length; j++) io.observe(heads[j]);
-  }
 
   /* ---------- scroll reveal ---------- */
   if (!reduce && 'IntersectionObserver' in window) {
