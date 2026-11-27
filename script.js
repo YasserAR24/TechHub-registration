@@ -101,6 +101,34 @@
 
   if (!SCRIPT_URL) st.textContent = 'Demo form. Nothing is sent or stored.';
 
+  /* Team registration closes after December 1, 2026 (event registration is unaffected). */
+  var teamDeadline = new Date(2026, 11, 1, 23, 59, 59, 999).getTime();
+  var teamDeadlineTimer = document.getElementById('team-deadline-timer');
+  function teamRegistrationClosed() { return Date.now() > teamDeadline; }
+  function updateTeamDeadline() {
+    var remaining = teamDeadline - Date.now();
+    if (remaining <= 0) {
+      teamDeadlineTimer.textContent = 'Team registration closed';
+      teamDeadlineTimer.className = 'deadline-timer closed';
+      rf.querySelectorAll('input, button').forEach(function (control) { control.disabled = true; });
+      st.className = 'status bad';
+      st.textContent = 'Team registration closed on December 1, 2026.';
+      return;
+    }
+    var days = Math.floor(remaining / 86400000);
+    var hours = Math.floor((remaining % 86400000) / 3600000);
+    var minutes = Math.floor((remaining % 3600000) / 60000);
+    var seconds = Math.floor((remaining % 60000) / 1000);
+    teamDeadlineTimer.textContent =
+      days + 'd ' +
+      String(hours).padStart(2, '0') + 'h ' +
+      String(minutes).padStart(2, '0') + 'm ' +
+      String(seconds).padStart(2, '0') + 's'
+      + ' left to register your team';
+  }
+  updateTeamDeadline();
+  setInterval(updateTeamDeadline, 1000);
+
   var PHONE_MSG = 'Phone must be 10 digits and start with 05, 06 or 07.';
   var tests = {
     name: { test: function (v) { return v.length >= 2; }, msg: 'Enter a full name.' },
@@ -180,6 +208,10 @@
 
   rf.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (teamRegistrationClosed()) {
+      updateTeamDeadline();
+      return;
+    }
     var firstBad = null;
     function flag(r, msg) { setError(r, msg); if (!firstBad) firstBad = document.getElementById(r.id); }
 
@@ -303,7 +335,7 @@
     evStatus.className = 'status';
     evStatus.textContent = 'Sending...';
     post(EVENT_SCRIPT_URL, params).then(function () {
-      document.getElementById('ev-text').textContent = 'We will contact ' + email + ' for confirmation.';
+      document.getElementById('ev-text').textContent = email + ', We wait for you at 5th December.';
       ef.querySelector('.form-body').hidden = true;
       evOk.hidden = false;
       evOk.focus();
@@ -329,6 +361,7 @@
       t.form.hidden = !on;
     });
     note.textContent = tabs[i].note;
+    teamDeadlineTimer.hidden = i !== 0;
   }
   tabs.forEach(function (t, i) {
     t.btn.addEventListener('click', function () { select(i); });

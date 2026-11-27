@@ -146,6 +146,16 @@ a { color: var(--cyan); }
 .tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 680px; }
 .tabs .btn { padding-inline: 8px; }
 .tabs .btn[aria-selected="true"]:hover { background: var(--white); color: var(--ink); }
+.sec-head .deadline-timer {
+  margin: 8px 0 0;
+  color: #b84747;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.deadline-timer.closed { color: #8a0f22; }
 
 /* registration form */
 .form { width: 100%; max-width: 680px; padding: 26px; text-align: left; }
