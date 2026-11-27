@@ -1,6 +1,8 @@
 (function () {
   /* Paste your Google Apps Script web app URL here. While empty, the form runs in demo mode (nothing is sent). */
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwH4mC_ywdNRfC_RdzYVOdo6pVyYbTN2GWVeYnfvB27Zuy_sHIFQj2Kflj-v5Ka-LpK/exec';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx11bqJguek4myNH1KjaC3jztU3cXtInf2j65rlB5_8z2DxWwwWvgqYtwIom71iQICw/exec';
+  /* Event registration uses the same web app: Code.gs sorts rows into the Competition and Event tabs. */
+  var EVENT_SCRIPT_URL = SCRIPT_URL;
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -76,6 +78,18 @@
     });
   }
 
+  /* POST to Apps Script and reject if the script refused the registration */
+  function post(url, params) {
+    /* give up after 60s so the button never stays stuck; Code.gs ignores an identical resend */
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = ctrl && setTimeout(function () { ctrl.abort(); }, 60000);
+    return fetch(url, { method: 'POST', body: params, signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { return r.json(); })
+      .catch(function () { throw new Error('Could not send. Check your connection and try again.'); })
+      .then(function (res) { if (!res.ok) throw new Error(res.error); })
+      .finally(function () { clearTimeout(timer); });
+  }
+
   /* ---------- registration form ---------- */
   var rf = document.getElementById('reg-form');
   var body = rf.querySelector('.form-body');
@@ -120,7 +134,8 @@
 
   var all = [team];
   people.forEach(function (p) { p.fields.forEach(function (f) { all.push(f); }); });
-  all.forEach(function (r) {
+  all.forEach(watch);
+  function watch(r) {
     var input = document.getElementById(r.id);
     input.addEventListener('input', function () {
       /* phone: digits only, max 10 */
@@ -132,7 +147,7 @@
       var v = input.value.trim();
       if (v && !validTest(r)(v)) setError(r, badMsg(r));
     });
-  });
+  }
 
   function finish(data) {
     var names = data.members.map(function (m) { return m.name; });
@@ -160,8 +175,7 @@
       params.append(labels[i] + '_phone', m.phone);
       params.append(labels[i] + '_email', m.email);
     });
-    /* no-cors: Apps Script does not send CORS headers; the request still reaches the sheet */
-    return fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: params });
+    return post(SCRIPT_URL, params);
   }
 
   rf.addEventListener('submit', function (e) {
@@ -222,10 +236,108 @@
     submitBtn.disabled = true;
     st.className = 'status';
     st.textContent = 'Sending...';
-    send(data).then(function () { finish(data); }).catch(function () {
+    send(data).then(function () { finish(data); }).catch(function (err) {
       submitBtn.disabled = false;
       st.className = 'status bad';
-      st.textContent = 'Could not send. Check your connection and try again.';
+      st.textContent = err.message;
+    });
+  });
+
+  /* ---------- event (attendee) form ---------- */
+  var ef = document.getElementById('event-form');
+  var evStatus = document.getElementById('ev-status');
+  var evBtn = document.getElementById('ev-submit');
+  var evOk = document.getElementById('ev-success');
+  var evFields = ['name', 'phone', 'email'].map(function (k) {
+    return { kind: k, id: 'ev-' + k, err: 'e-ev-' + k };
+  });
+  evFields.forEach(watch);
+
+  var wsBoxes = Array.prototype.slice.call(ef.querySelectorAll('input[name="workshop"]'));
+  function chosenWorkshops() {
+    return wsBoxes.filter(function (b) { return b.checked; }).map(function (b) { return b.value; });
+  }
+  function setWorkshopError(message) {
+    document.getElementById('e-ev-ws').textContent = message;
+    wsBoxes.forEach(function (b) {
+      if (message) b.setAttribute('aria-invalid', 'true');
+      else b.removeAttribute('aria-invalid');
+    });
+  }
+  wsBoxes.forEach(function (b) {
+    b.addEventListener('change', function () { if (chosenWorkshops().length) setWorkshopError(''); });
+  });
+
+  if (!EVENT_SCRIPT_URL) {
+    evBtn.disabled = true;
+    evBtn.style.cursor = 'not-allowed';
+    evStatus.textContent = 'Event registration is not open yet.';
+  }
+
+  ef.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!EVENT_SCRIPT_URL) return;
+    var firstBad = null;
+    var params = new URLSearchParams();
+    var email = '';
+    evFields.forEach(function (f) {
+      var input = document.getElementById(f.id);
+      var v = input.value.trim();
+      var msg = !v ? emptyMsg[f.kind] : (tests[f.kind].test(v) ? '' : tests[f.kind].msg);
+      setError(f, msg);
+      if (msg && !firstBad) firstBad = input;
+      if (f.kind === 'email') email = v;
+      params.append(f.kind, v);
+    });
+    var workshops = chosenWorkshops();
+    setWorkshopError(workshops.length ? '' : 'Choose one workshop.');
+    if (!workshops.length && !firstBad) firstBad = wsBoxes[0];
+    params.append('workshop', workshops[0] || '');
+    if (firstBad) {
+      evStatus.className = 'status bad';
+      evStatus.textContent = 'Please fix the highlighted fields.';
+      firstBad.focus();
+      return;
+    }
+    evBtn.disabled = true;
+    evStatus.className = 'status';
+    evStatus.textContent = 'Sending...';
+    post(EVENT_SCRIPT_URL, params).then(function () {
+      document.getElementById('ev-text').textContent = 'We will contact ' + email + ' for confirmation.';
+      ef.querySelector('.form-body').hidden = true;
+      evOk.hidden = false;
+      evOk.focus();
+    }).catch(function (err) {
+      evBtn.disabled = false;
+      evStatus.className = 'status bad';
+      evStatus.textContent = err.message;
+    });
+  });
+
+  /* ---------- competition / event switch ---------- */
+  var note = document.getElementById('reg-note');
+  var tabs = [
+    { btn: document.getElementById('tab-comp'), form: rf, note: note.textContent },
+    { btn: document.getElementById('tab-event'), form: ef, note: 'Register to attend the event. No team needed.' }
+  ];
+  function select(i) {
+    tabs.forEach(function (t, n) {
+      var on = n === i;
+      t.btn.setAttribute('aria-selected', String(on));
+      t.btn.tabIndex = on ? 0 : -1;
+      t.btn.classList.toggle('solid', on);
+      t.form.hidden = !on;
+    });
+    note.textContent = tabs[i].note;
+  }
+  tabs.forEach(function (t, i) {
+    t.btn.addEventListener('click', function () { select(i); });
+    t.btn.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      var next = 1 - i;
+      select(next);
+      tabs[next].btn.focus();
     });
   });
 })();

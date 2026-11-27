@@ -142,6 +142,11 @@ a { color: var(--cyan); }
   color: var(--ink);
 }
 
+/* registration type switch */
+.tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 680px; }
+.tabs .btn { padding-inline: 8px; }
+.tabs .btn[aria-selected="true"]:hover { background: var(--white); color: var(--ink); }
+
 /* registration form */
 .form { width: 100%; max-width: 680px; padding: 26px; text-align: left; }
 .form-body { display: flex; flex-direction: column; gap: 20px; }
@@ -168,7 +173,9 @@ a { color: var(--cyan); }
 fieldset.group { margin: 0; min-width: 0; padding: 16px; border: 1px solid rgba(11,26,44,0.6); background: rgba(255,255,255,0.08); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
 fieldset.group legend { padding: 0 8px; font-family: var(--font-display); font-weight: 700; font-size: 14px; line-height: 1.4; color: var(--ink); letter-spacing: 0.1em; text-transform: uppercase; }
 fieldset.group legend::before { content: "> "; }
-fieldset.group .field.span2 { grid-column: 1 / -1; }
+fieldset.group .field.span2, fieldset.group .span2 { grid-column: 1 / -1; }
+fieldset.group legend { max-width: 100%; }
+.check input[aria-invalid="true"] { outline: 2px solid var(--danger); outline-offset: 1px; }
 
 .check { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border: 1px solid rgba(11,26,44,0.6); background: rgba(255,255,255,0.08); cursor: pointer; color: var(--ink); font-weight: 700; line-height: 1.5; }
 .check:hover { border-color: var(--white); }

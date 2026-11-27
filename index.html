@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="claude:viewport-fit-sides" content="cover">
   <title>TechHub Registration</title>
-  <meta name="description" content="TechHub is a 15-hour university hackathon organized by the IGENERGY Scientific Club at ENSTTIC Oran on 05 December 2026. Register your place.">
+  <meta name="description" content="TechHub is an AI competition with a 4-hour limit, organized by the IGENERGY Scientific Club at ENSTTIC Oran on 05 December 2026. Register your place.">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/png" href="imgs/page-icon.png">
@@ -37,13 +37,17 @@
     <div class="lede">
       <p>TechHub is an AI competition organized by IGENERGY scientific club, bringing together students to tackle real-world problems through creativity, teamwork, and innovation.</p>
       <p>Participants will work in teams to develop innovative solutions to a given real-world problem within a limited time of 4 hours. The challenge encourages critical thinking, collaboration, and practical problem-solving skills.</p>
-      <p>At the end of the competition, teams will present their solutions to the jury, which will evaluate their ideas based on creativity, feasibility, innovation, and effectiveness.</p>
+      <p>At the end of the competition, teams will present their solutions to the jury, which will evaluate their ideas based on creativity, innovation, and effectiveness.</p>
     </div>
   </header>
 
   <section class="sec" id="registration">
-    <div class="sec-head"><h2 class="scr">REGISTRATION</h2><p>The team must have at least 3 members and no more than 4 members.</p></div>
-    <form class="win form" id="reg-form" novalidate>
+    <div class="sec-head"><h2 class="scr">REGISTRATION</h2><p id="reg-note">The team must have at least 3 members and no more than 4 members.</p></div>
+    <div class="tabs" role="tablist" aria-label="Registration type">
+      <button class="btn solid" type="button" role="tab" id="tab-comp" aria-controls="reg-form" aria-selected="true">Competition</button>
+      <button class="btn" type="button" role="tab" id="tab-event" aria-controls="event-form" aria-selected="false" tabindex="-1">Event</button>
+    </div>
+    <form class="win form" id="reg-form" role="tabpanel" aria-labelledby="tab-comp" novalidate>
       <div class="form-body">
 
         <div class="field">
@@ -142,6 +146,52 @@
         <span class="check-mark" aria-hidden="true">&#10003;</span>
         <h3 id="s-title">You're in.</h3>
         <p id="s-text"></p>
+      </div>
+    </form>
+
+    <form class="win form" id="event-form" role="tabpanel" aria-labelledby="tab-event" novalidate hidden>
+      <div class="form-body">
+        <fieldset class="group">
+          <legend>Attendee</legend>
+          <div class="field span2">
+            <label for="ev-name">Full name</label>
+            <input id="ev-name" name="name" type="text" placeholder="Full name" autocomplete="name" aria-describedby="e-ev-name">
+            <span class="err" id="e-ev-name" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="ev-phone">Phone number</label>
+            <input id="ev-phone" name="phone" type="tel" inputmode="numeric" placeholder="0..." autocomplete="tel" aria-describedby="e-ev-phone">
+            <span class="err" id="e-ev-phone" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="ev-email">Email</label>
+            <input id="ev-email" name="email" type="email" inputmode="email" placeholder="you@gmail.com" autocomplete="email" aria-describedby="e-ev-email">
+            <span class="err" id="e-ev-email" aria-live="polite"></span>
+          </div>
+        </fieldset>
+
+        <fieldset class="group" id="ev-workshops">
+          <legend>Which workshop do you intend to attend?</legend>
+          <label class="check" for="ev-ws-ai">
+            <input id="ev-ws-ai" name="workshop" type="radio" value="AI workshop" aria-describedby="e-ev-ws">
+            <span>AI workshop</span>
+          </label>
+          <label class="check" for="ev-ws-devops">
+            <input id="ev-ws-devops" name="workshop" type="radio" value="DevOps workshop" aria-describedby="e-ev-ws">
+            <span>DevOps workshop</span>
+          </label>
+          <span class="err span2" id="e-ev-ws" aria-live="polite"></span>
+        </fieldset>
+
+        <div class="form-foot">
+          <button class="btn solid" type="submit" id="ev-submit">Register for event</button>
+          <p class="status" id="ev-status" role="status"></p>
+        </div>
+      </div>
+      <div class="success" id="ev-success" hidden tabindex="-1">
+        <span class="check-mark" aria-hidden="true">&#10003;</span>
+        <h3>You're in.</h3>
+        <p id="ev-text"></p>
       </div>
     </form>
   </section>
