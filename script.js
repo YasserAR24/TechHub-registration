@@ -1,6 +1,6 @@
 (function () {
   /* Paste your Google Apps Script web app URL here. While empty, the form runs in demo mode (nothing is sent). */
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx11bqJguek4myNH1KjaC3jztU3cXtInf2j65rlB5_8z2DxWwwWvgqYtwIom71iQICw/exec';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLBsqAU7BiWwtRRUlJXprt7VVEHX87kjN7Uqhe-OX-AO_rBPak2yWYJbje-mdGumAx/exec';
   /* Event registration uses the same web app: Code.gs sorts rows into the Competition and Event tabs. */
   var EVENT_SCRIPT_URL = SCRIPT_URL;
 
